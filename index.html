@@ -125,17 +125,20 @@
       const ANDROID_URL =
         "https://play.google.com/store/apps/details?id=com.lupusa87.ioliLocvani";
 
-      function detectPlatformAndRedirect() {
+      async function detectPlatformAndRedirect() {
         const userAgent =
           navigator.userAgent || navigator.vendor || window.opera;
 
-        // Detect iOS - INSTANT REDIRECT
+        // Count visit FIRST (wait for it)
+        await updateVisitorCount();
+
+        // Detect iOS - REDIRECT AFTER COUNTING
         if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
           window.location.href = IOS_URL;
           return;
         }
 
-        // Detect Android - INSTANT REDIRECT
+        // Detect Android - REDIRECT AFTER COUNTING
         if (/android/i.test(userAgent)) {
           window.location.href = ANDROID_URL;
           return;
@@ -165,9 +168,8 @@
         }
       }
 
-      // Run detection immediately on page load
+      // Run detection (which now includes counting)
       detectPlatformAndRedirect();
-      updateVisitorCount();
     </script>
   </body>
 </html>

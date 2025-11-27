@@ -10,17 +10,17 @@
         // Count visit FIRST (wait for it)
         await updateVisitorCount();
 
-        // // Detect iOS - REDIRECT AFTER COUNTING
-        // if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-        //   window.location.href = IOS_URL;
-        //   return;
-        // }
+        // Detect iOS - REDIRECT AFTER COUNTING
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+          window.location.href = IOS_URL;
+          return;
+        }
 
-        // // Detect Android - REDIRECT AFTER COUNTING
-        // if (/android/i.test(userAgent)) {
-        //   window.location.href = ANDROID_URL;
-        //   return;
-        // }
+        // Detect Android - REDIRECT AFTER COUNTING
+        if (/android/i.test(userAgent)) {
+          window.location.href = ANDROID_URL;
+          return;
+        }
 
         // Desktop or unknown - show both options IMMEDIATELY
         document.querySelector(".loader").style.display = "none";

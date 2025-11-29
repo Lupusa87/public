@@ -1,50 +1,118 @@
- // Your app store URLs
-      const IOS_URL = "https://apps.apple.com/us/app/iolilocvani/id6754865510";
-      const ANDROID_URL =
-        "https://play.google.com/store/apps/details?id=com.lupusa87.ioliLocvani";
+// ============================================================================
+// IoliLocvani Download Page: Visitor Counter + Platform UI
+// ============================================================================
 
-      async function detectPlatformAndRedirect() {
-        const userAgent =
-          navigator.userAgent || navigator.vendor || window.opera;
+// App store URLs
+const IOS_URL = "https://apps.apple.com/us/app/iolilocvani/id6754865510";
+const ANDROID_URL =
+  "https://play.google.com/store/apps/details?id=com.lupusa87.ioliLocvani";
 
-        // Count visit FIRST (wait for it)
-        await updateVisitorCount();
+// Visitor Counter API base (CORS enabled)
+const VISITOR_API_BASE = "https://visitor.6developer.com";
 
-        // Detect iOS - REDIRECT AFTER COUNTING
-        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-          window.location.href = IOS_URL;
-          return;
-        }
+// ============================================================================
+// VISITOR COUNTER (Today + Total)
+// ============================================================================
 
-        // Detect Android - REDIRECT AFTER COUNTING
-        if (/android/i.test(userAgent)) {
-          window.location.href = ANDROID_URL;
-          return;
-        }
+async function updateVisitorCount() {
+  const counterEl = document.getElementById("visitCount");
 
-        // Desktop or unknown - show both options IMMEDIATELY
-        document.querySelector(".loader").style.display = "none";
-        document.getElementById("message").textContent = "აირჩიეთ პლატფორმა:";
-        document.getElementById("fallback").style.display = "block";
-      }
+  const hostname = window.location.hostname;
+  const domain =
+    hostname === "localhost" || hostname === "127.0.0.1" || hostname === ""
+      ? "vakhtangi-iolilocvani-download-local"
+      : hostname;
 
-      async function updateVisitorCount() {
-        const counterEl = document.getElementById("visitCount");
-        if (!counterEl) return;
+  const payload = {
+    domain,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    page_path: window.location.pathname,
+    page_title: document.title,
+    referrer: document.referrer || "",
+  };
 
-        try {
-          const response = await fetch(
-            "https://counterapi.com/api/lupusa87vakhtangiabashidze-ka-eng/view/iolidownload"
-          );
-          if (!response.ok) throw new Error("Counter API request failed");
+  if (counterEl) {
+    counterEl.textContent = "...";
+  }
 
-          const data = await response.json();
-          counterEl.textContent = data.value || "0";
-        } catch (error) {
-          console.error("Failed to update visitor count:", error);
-          counterEl.textContent = "შეცდომა";
-        }
-      }
+  try {
+    const res = await fetch(`${VISITOR_API_BASE}/visit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-      // Run detection (which now includes counting)
-      detectPlatformAndRedirect();
+    if (!res.ok) {
+      throw new Error("Visitor API error: " + res.status);
+    }
+
+    const data = await res.json();
+
+    const total = typeof data.totalCount === "number" ? data.totalCount : 0;
+    const today = typeof data.todayCount === "number" ? data.todayCount : 0;
+
+    if (counterEl) {
+      counterEl.textContent = `${today}/${total}`;
+    }
+  } catch (err) {
+    console.error("Failed to update visitor count:", err);
+    if (counterEl) {
+      counterEl.textContent = "შეცდომა";
+    }
+  }
+}
+
+// ============================================================================
+// PLATFORM DETECTION + UI SETUP (NO AUTO-OPEN)
+// ============================================================================
+
+async function setupPlatformUI() {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+  // 1) Count visit
+  await updateVisitorCount();
+
+  // 2) Platform detection
+  const isIOS = /iPhone|iPod/.test(userAgent) && !window.MSStream;
+  const isAndroid = /Android/i.test(userAgent);
+
+  // 3) Get DOM elements
+  const loader = document.querySelector(".loader");
+  const messageEl = document.getElementById("message");
+  const fallbackEl = document.getElementById("fallback");
+  const appStoreBadge = document.querySelector(".app-store-badge");
+  const playStoreBadge = document.querySelector(".play-store-badge");
+
+  // 4) Show main UI
+  if (loader) loader.style.display = "none";
+  if (fallbackEl) fallbackEl.style.display = "block";
+
+  // 5) Show/hide store buttons based on platform
+  if (isIOS) {
+    if (messageEl) {
+      messageEl.textContent = "გადმოწერა:";
+    }
+    if (appStoreBadge) appStoreBadge.style.display = "inline-block";
+    if (playStoreBadge) playStoreBadge.style.display = "none";
+  } else if (isAndroid) {
+    if (messageEl) {
+      messageEl.textContent = "გადმოწერა:";
+    }
+    if (appStoreBadge) appStoreBadge.style.display = "none";
+    if (playStoreBadge) playStoreBadge.style.display = "inline-block";
+  } else {
+    // Desktop / unknown → show both
+    if (messageEl) {
+      messageEl.textContent = "აირჩიეთ პლატფორმა:";
+    }
+    if (appStoreBadge) appStoreBadge.style.display = "inline-block";
+    if (playStoreBadge) playStoreBadge.style.display = "inline-block";
+  }
+
+  // 6) Make sure hrefs are correct (defensive)
+  if (appStoreBadge) appStoreBadge.href = IOS_URL;
+  if (playStoreBadge) playStoreBadge.href = ANDROID_URL;
+}
+
+// Run on load
+setupPlatformUI();

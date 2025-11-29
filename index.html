@@ -1,9 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ka">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>გადმოწერა იოლი ლოცვანი</title>
+
+    <!-- Primary Meta Tags -->
+    <title>იოლი ლოცვანი - Orthodox Christian Prayer App (IoliLocvani)</title>
+    <meta
+      name="description"
+      content="იოლი ლოცვანი — 7-გზის ლოცვების აპლიკაცია: შვიდგზის ლოცვა, შვიდგზის ლოცვები, 7-გზის ლოცვა, 7-გზის ლოცვები, ლოცვანი, იოლილოცვანი, იოლი ლოცვანი. App by ვახტანგ აბაშიძე (Vakhtangi Abashidze)."
+    />
+    <meta
+      name="keywords"
+      content="iolilocvani, IoliLocvani, იოლილოცვანი, იოლი ლოცვანი, ლოცვანი, შვიდგზის ლოცვა, შვიდგზის ლოცვები, 7-გზის ლოცვა, 7-გზის ლოცვები, მართლმადიდებლობა, მართლმადიდებელი, ქრისტიანი, ქრისტიანობა, ქრისტე, ეკლესია, ქართული ლოცვები, ქართულ ენაზე ლოცვები, orthodox, orthodoxy, christian, prayer app, georgian prayer book, vakhtangi abashidze, ვახო აბაშიძე, ვახტანგ აბაშიძე, ვახტანგი აბაშიძე"
+    />
+    <meta name="author" content="ვახტანგ აბაშიძე (Vakhtangi Abashidze)" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://lupusa87.github.io/public/" />
+
+    <!-- Language focus -->
+    <meta http-equiv="Content-Language" content="ka" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://lupusa87.github.io/public/" />
+    <meta property="og:title" content="იოლი ლოცვანი - IoliLocvani" />
+    <meta
+      property="og:description"
+      content="7-გზის ლოცვების აპლიკაცია."
+    />
+    <!-- Optional preview image (uncomment when you have it) -->
+    <!-- <meta property="og:image" content="https://lupusa87.github.io/public/assets/iolilocvani-preview.png" /> -->
+    <meta property="og:locale" content="ka_GE" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="IoliLocvani - იოლი ლოცვანი"
+    />
+    <meta
+      name="twitter:description"
+      content="იოლი ლოცვანი — 7-გზის ლოცვების აპლიკაცია - ვახტანგი აბაშიძე"
+    />
+    <!-- <meta name="twitter:image" content="https://lupusa87.github.io/public/assets/iolilocvani-preview.png" /> -->
+
+    <!-- iOS Smart Banner -->
+    <meta name="apple-itunes-app" content="app-id=6754865510" />
+
+    <!-- Google Play deep link (optional) -->
+    <link
+      rel="alternate"
+      href="android-app://com.lupusa87.ioliLocvani/https/lupusa87.github.io/public/"
+    />
 
     <!-- External Resources -->
     <link
@@ -13,7 +63,7 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMн13TZye+giMm8e2LwA=="
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
@@ -89,14 +139,14 @@
     <!-- Load share component HTML + init share widget -->
     <script>
       document.addEventListener("DOMContentLoaded", async () => {
- 
+
 
         const container = document.getElementById("share-section-placeholder");
 
         try {
           const res = await fetch("shareComp/shareComp.html");
           const html = await res.text();
- 
+
           container.innerHTML = html;
 
           if (

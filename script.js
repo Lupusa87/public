@@ -90,13 +90,13 @@ async function setupPlatformUI() {
   // 5) Show/hide store buttons based on platform
   if (isIOS) {
     if (messageEl) {
-      messageEl.textContent = "გადმოწერა:";
+      messageEl.textContent = "გადმოწერა IOS:";
     }
     if (appStoreBadge) appStoreBadge.style.display = "inline-block";
     if (playStoreBadge) playStoreBadge.style.display = "none";
   } else if (isAndroid) {
     if (messageEl) {
-      messageEl.textContent = "გადმოწერა:";
+      messageEl.textContent = "გადმოწერა Android:";
     }
     if (appStoreBadge) appStoreBadge.style.display = "none";
     if (playStoreBadge) playStoreBadge.style.display = "inline-block";

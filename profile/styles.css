@@ -95,11 +95,10 @@ body.dark .social-button.github i { color: #e2e8f0; }
 
 @media (max-width: 640px) {
   .social-links {
-    justify-content: stretch;
+    justify-content: center;
   }
 
   .social-button {
-    flex: 1 1 auto;
-    min-width: calc(50% - 5px);
+    flex: 0 0 auto;
   }
 }

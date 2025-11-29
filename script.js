@@ -17,11 +17,11 @@ const VISITOR_API_BASE = "https://visitor.6developer.com";
 async function updateVisitorCount() {
   const counterEl = document.getElementById("visitCount");
 
-  const hostname = window.location.hostname;
+  const hostName = window.location.hostname;
   const domain =
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1" ||
-    window.location.hostname === ""
+    hostName === "localhost" ||
+    hostName === "127.0.0.1" ||
+    hostName === ""
       ? "vakhtangi-iolilocvani-download-local"
       : "iolilocvani-download-page";
 

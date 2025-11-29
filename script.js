@@ -24,6 +24,7 @@ async function updateVisitorCount() {
       : hostname;
 
   const payload = {
+    project: "iolilocvani",
     domain,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     page_path: window.location.pathname,

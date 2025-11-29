@@ -19,12 +19,13 @@ async function updateVisitorCount() {
 
   const hostname = window.location.hostname;
   const domain =
-    hostname === "localhost" || hostname === "127.0.0.1" || hostname === ""
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === ""
       ? "vakhtangi-iolilocvani-download-local"
-      : hostname;
+      : "iolilocvani-download-page";
 
   const payload = {
-    project: "iolilocvani",
     domain,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     page_path: window.location.pathname,

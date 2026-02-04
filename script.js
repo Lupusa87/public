@@ -3,7 +3,7 @@
 // ============================================================================
 
 // App store URLs
-const IOS_URL = "https://apps.apple.com/us/app/iolilocvani/id6754865510";
+const IOS_URL = "https://apps.apple.com/app/id6754865510";
 const ANDROID_URL =
   "https://play.google.com/store/apps/details?id=com.lupusa87.ioliLocvani";
 

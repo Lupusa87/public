@@ -13,8 +13,6 @@ const VISITOR_API_TIMEOUT_MS = 8000;
 const VISITOR_CACHE_KEY = "iolilocvani-visitor-counts";
 const PROD_VISITOR_DOMAIN = "iolilocvani-download-page";
 const LOCAL_VISITOR_DOMAIN = "vakhtangi-iolilocvani-download-local";
-const SPEEDCOUNTER_ID = "4831030";
-const SPEEDCOUNTER_COLOR = "brightgreen";
 
 // ============================================================================
 // VISITOR COUNTER (Today + Total)
@@ -63,17 +61,8 @@ function formatVisitorCounts(counts) {
   return `${counts.todayCount}/${counts.totalCount}`;
 }
 
-function getSpeedCounterMarkup() {
-  const src = `https://speedcounter.net/counter-v2/${SPEEDCOUNTER_ID}-total-${SPEEDCOUNTER_COLOR}.svg`;
-  return `<img src="${src}" alt="Total visitors" loading="lazy" decoding="async" referrerpolicy="strict-origin-when-cross-origin" style="height:20px; vertical-align:middle;">`;
-}
-
 function renderVisitorText(counterEl, text) {
   counterEl.textContent = text;
-}
-
-function renderVisitorFallbackImage(counterEl) {
-  counterEl.innerHTML = getSpeedCounterMarkup();
 }
 
 function readCachedVisitorCounts() {
@@ -170,7 +159,7 @@ async function updateVisitorCount() {
       return;
     }
 
-    renderVisitorFallbackImage(counterEl);
+    renderVisitorText(counterEl, "--/--");
   }
 }
 
@@ -181,8 +170,9 @@ async function updateVisitorCount() {
 async function setupPlatformUI() {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-  // 1) Count visit in the background so a counter outage never blocks the page UI.
-  void updateVisitorCount();
+  // Visitor counter code is intentionally preserved but disabled for now.
+  // Restore by bringing back the markup in index.html and re-enabling this call.
+  // void updateVisitorCount();
 
   // 2) Platform detection
   const isIOS = /iPhone|iPod/.test(userAgent) && !window.MSStream;

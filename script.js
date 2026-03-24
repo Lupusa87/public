@@ -9,58 +9,168 @@ const ANDROID_URL =
 
 // Visitor Counter API base (CORS enabled)
 const VISITOR_API_BASE = "https://visitor.6developer.com";
+const VISITOR_API_TIMEOUT_MS = 8000;
+const VISITOR_CACHE_KEY = "iolilocvani-visitor-counts";
+const PROD_VISITOR_DOMAIN = "iolilocvani-download-page";
+const LOCAL_VISITOR_DOMAIN = "vakhtangi-iolilocvani-download-local";
+const SPEEDCOUNTER_ID = "4831030";
+const SPEEDCOUNTER_COLOR = "brightgreen";
 
 // ============================================================================
 // VISITOR COUNTER (Today + Total)
 // ============================================================================
 
-async function updateVisitorCount() {
-  const counterEl = document.getElementById("visitCount");
-
+function getVisitorDomain() {
   const hostName = window.location.hostname;
-  const domain =
-    hostName === "localhost" ||
-    hostName === "127.0.0.1" ||
-    hostName === ""
-      ? "vakhtangi-iolilocvani-download-local"
-      : "iolilocvani-download-page";
 
-  const payload = {
+  return hostName === "localhost" || hostName === "127.0.0.1" || hostName === ""
+    ? LOCAL_VISITOR_DOMAIN
+    : PROD_VISITOR_DOMAIN;
+}
+
+function getVisitorPayload(domain) {
+  return {
     domain,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     page_path: window.location.pathname,
     page_title: document.title,
     referrer: document.referrer || "",
   };
+}
 
-  if (counterEl) {
-    counterEl.textContent = "...";
+function normalizeVisitorCounts(data) {
+  if (!data || typeof data !== "object") {
+    return null;
   }
 
+  const totalCount =
+    typeof data.totalCount === "number" && Number.isFinite(data.totalCount)
+      ? data.totalCount
+      : null;
+  const todayCount =
+    typeof data.todayCount === "number" && Number.isFinite(data.todayCount)
+      ? data.todayCount
+      : null;
+
+  if (totalCount === null || todayCount === null) {
+    return null;
+  }
+
+  return { totalCount, todayCount };
+}
+
+function formatVisitorCounts(counts) {
+  return `${counts.todayCount}/${counts.totalCount}`;
+}
+
+function getSpeedCounterMarkup() {
+  const src = `https://speedcounter.net/counter-v2/${SPEEDCOUNTER_ID}-total-${SPEEDCOUNTER_COLOR}.svg`;
+  return `<img src="${src}" alt="Total visitors" loading="lazy" decoding="async" referrerpolicy="strict-origin-when-cross-origin" style="height:20px; vertical-align:middle;">`;
+}
+
+function renderVisitorText(counterEl, text) {
+  counterEl.textContent = text;
+}
+
+function renderVisitorFallbackImage(counterEl) {
+  counterEl.innerHTML = getSpeedCounterMarkup();
+}
+
+function readCachedVisitorCounts() {
   try {
-    const res = await fetch(`${VISITOR_API_BASE}/visit`, {
+    const raw = window.localStorage.getItem(VISITOR_CACHE_KEY);
+    if (!raw) {
+      return null;
+    }
+
+    return normalizeVisitorCounts(JSON.parse(raw));
+  } catch (error) {
+    console.warn("Failed to read cached visitor counts:", error);
+    return null;
+  }
+}
+
+function writeCachedVisitorCounts(counts) {
+  try {
+    window.localStorage.setItem(VISITOR_CACHE_KEY, JSON.stringify(counts));
+  } catch (error) {
+    console.warn("Failed to cache visitor counts:", error);
+  }
+}
+
+async function fetchVisitorJson(url, options = {}) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => {
+    controller.abort();
+  }, VISITOR_API_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Visitor API error: ${response.status}`);
+    }
+
+    return response.json();
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+async function updateVisitorCount() {
+  const counterEl = document.getElementById("visitCount");
+  if (!counterEl) {
+    return;
+  }
+
+  const domain = getVisitorDomain();
+  const payload = getVisitorPayload(domain);
+  const cachedCounts = readCachedVisitorCounts();
+
+  renderVisitorText(counterEl, cachedCounts ? formatVisitorCounts(cachedCounts) : "...");
+
+  try {
+    const data = await fetchVisitorJson(`${VISITOR_API_BASE}/visit`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+    const counts = normalizeVisitorCounts(data);
 
-    if (!res.ok) {
-      throw new Error("Visitor API error: " + res.status);
+    if (!counts) {
+      throw new Error("Visitor API returned an unexpected payload");
     }
 
-    const data = await res.json();
+    writeCachedVisitorCounts(counts);
+    renderVisitorText(counterEl, formatVisitorCounts(counts));
+    return;
+  } catch (err) {
+    console.warn("Visitor count POST failed, trying read-only fallback:", err);
+  }
 
-    const total = typeof data.totalCount === "number" ? data.totalCount : 0;
-    const today = typeof data.todayCount === "number" ? data.todayCount : 0;
+  try {
+    const data = await fetchVisitorJson(
+      `${VISITOR_API_BASE}/visit?domain=${encodeURIComponent(domain)}`
+    );
+    const counts = normalizeVisitorCounts(data);
 
-    if (counterEl) {
-      counterEl.textContent = `${today}/${total}`;
+    if (!counts) {
+      throw new Error("Visitor stats fallback returned an unexpected payload");
     }
+
+    writeCachedVisitorCounts(counts);
+    renderVisitorText(counterEl, formatVisitorCounts(counts));
   } catch (err) {
     console.error("Failed to update visitor count:", err);
-    if (counterEl) {
-      counterEl.textContent = "შეცდომა";
+    if (cachedCounts) {
+      renderVisitorText(counterEl, formatVisitorCounts(cachedCounts));
+      return;
     }
+
+    renderVisitorFallbackImage(counterEl);
   }
 }
 
@@ -71,8 +181,8 @@ async function updateVisitorCount() {
 async function setupPlatformUI() {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-  // 1) Count visit
-  await updateVisitorCount();
+  // 1) Count visit in the background so a counter outage never blocks the page UI.
+  void updateVisitorCount();
 
   // 2) Platform detection
   const isIOS = /iPhone|iPod/.test(userAgent) && !window.MSStream;

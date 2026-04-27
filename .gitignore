@@ -1,18 +1,3 @@
-# macOS system files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-
-# Windows system files
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# Editor files
-.vscode/
-.idea/
-
-# Other
-*.log
+dist/
+node_modules/
+*.tsbuildinfo

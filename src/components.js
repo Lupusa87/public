@@ -1,4 +1,4 @@
-const PAGE_URL = "https://lupusa87.github.io/public/";
+import { LINKS } from "./links.js";
 
 function shareLink(url) {
   return encodeURIComponent(url);
@@ -23,27 +23,27 @@ export function renderProfile() {
       </div>
 
       <nav class="social-links" aria-label="Social media links">
-        <a class="social-button email" href="mailto:VakhtangiAbashidze@gmail.com" aria-label="Send email">
+        <a class="social-button email" href="${LINKS.profile.email}" aria-label="Send email">
           <span class="material-icons" aria-hidden="true">email</span>
         </a>
 
-        <a class="social-button youtube" href="https://www.youtube.com/@vakhtangiabashidze8559" target="_blank" rel="noopener noreferrer" aria-label="Visit YouTube channel">
+        <a class="social-button youtube" href="${LINKS.profile.youtube}" target="_blank" rel="noopener noreferrer" aria-label="Visit YouTube channel">
           <i class="fa-brands fa-youtube" aria-hidden="true"></i>
         </a>
 
-        <a class="social-button github" href="https://www.github.com/Lupusa87" target="_blank" rel="noopener noreferrer" aria-label="Visit GitHub profile">
+        <a class="social-button github" href="${LINKS.profile.github}" target="_blank" rel="noopener noreferrer" aria-label="Visit GitHub profile">
           <i class="fa-brands fa-github" aria-hidden="true"></i>
         </a>
 
-        <a class="social-button facebook" href="https://www.facebook.com/share/1JAEXpjttU/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="Visit Facebook profile">
+        <a class="social-button facebook" href="${LINKS.profile.facebook}" target="_blank" rel="noopener noreferrer" aria-label="Visit Facebook profile">
           <i class="fa-brands fa-facebook" aria-hidden="true"></i>
         </a>
 
-        <a class="social-button x" href="https://x.com/lupusa1" target="_blank" rel="noopener noreferrer" aria-label="Visit X (Twitter) profile">
+        <a class="social-button x" href="${LINKS.profile.x}" target="_blank" rel="noopener noreferrer" aria-label="Visit X (Twitter) profile">
           <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
         </a>
 
-        <a class="social-button linkedin" href="https://www.linkedin.com/in/vakhtangi-abashidze-652887140" target="_blank" rel="noopener noreferrer" aria-label="Visit LinkedIn profile">
+        <a class="social-button linkedin" href="${LINKS.profile.linkedin}" target="_blank" rel="noopener noreferrer" aria-label="Visit LinkedIn profile">
           <i class="fa-brands fa-linkedin" aria-hidden="true"></i>
         </a>
       </nav>
@@ -58,7 +58,7 @@ export function renderSocialNetworks() {
       <nav class="social-links" aria-label="Social media links">
         <a
           class="social-button facebook"
-          href="https://www.facebook.com/locvani"
+          href="${LINKS.appSocial.facebook}"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Visit Facebook page"
@@ -68,7 +68,7 @@ export function renderSocialNetworks() {
 
         <a
           class="social-button youtube"
-          href="https://www.youtube.com/playlist?list=PLgZE0RHqetzvvQhheT_kEcRh3GNwutd4M"
+          href="${LINKS.appSocial.youtube}"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Visit YouTube channel"
@@ -78,7 +78,7 @@ export function renderSocialNetworks() {
 
         <a
           class="social-button instagram"
-          href="https://www.instagram.com/locvani/"
+          href="${LINKS.appSocial.instagram}"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Visit Instagram page"
@@ -138,11 +138,11 @@ export function initShareSection({ title, url }) {
   const copy = root.querySelector(".share-button.copylink");
   const text = title || "Share";
 
-  if (fb) fb.href = `https://www.facebook.com/sharer/sharer.php?u=${shareLink(url)}`;
-  if (x) x.href = `https://twitter.com/intent/tweet?text=${shareText(text)}&url=${shareLink(url)}`;
-  if (linkedin) linkedin.href = `https://www.linkedin.com/sharing/share-offsite/?url=${shareLink(url)}`;
-  if (whatsapp) whatsapp.href = `https://wa.me/?text=${shareText(`${text} ${url}`)}`;
-  if (telegram) telegram.href = `https://t.me/share/url?url=${shareLink(url)}&text=${shareText(text)}`;
+  if (fb) fb.href = LINKS.share.facebook(shareLink(url));
+  if (x) x.href = LINKS.share.x(shareLink(url), shareText(text));
+  if (linkedin) linkedin.href = LINKS.share.linkedin(shareLink(url));
+  if (whatsapp) whatsapp.href = LINKS.share.whatsapp(shareText(`${text} ${url}`));
+  if (telegram) telegram.href = LINKS.share.telegram(shareLink(url), shareText(text));
 
   if (copy) {
     copy.addEventListener("click", async (event) => {
@@ -165,5 +165,3 @@ export function initShareSection({ title, url }) {
     });
   }
 }
-
-export { PAGE_URL };

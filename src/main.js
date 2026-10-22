@@ -2,10 +2,8 @@ import "../styles.css";
 import "../shareComp/shareComp.css";
 import "../profile/styles.css";
 import "../socialNetworks/socialNetworks.css";
-import { PAGE_URL, initShareSection, renderProfile, renderShareSection, renderSocialNetworks } from "./components.js";
-
-const IOS_URL = "https://apps.apple.com/app/id6754865510";
-const ANDROID_URL = "https://play.google.com/store/apps/details?id=com.lupusa87.ioliLocvani";
+import { LINKS, SITE_URL } from "./links.js";
+import { initShareSection, renderProfile, renderShareSection, renderSocialNetworks } from "./components.js";
 
 function getVisitorDomain() {
   const hostName = window.location.hostname;
@@ -43,8 +41,8 @@ function setupPlatformUI() {
     if (playStoreBadge) playStoreBadge.style.display = "inline-block";
   }
 
-  if (appStoreBadge) appStoreBadge.href = IOS_URL;
-  if (playStoreBadge) playStoreBadge.href = ANDROID_URL;
+  if (appStoreBadge) appStoreBadge.href = LINKS.app.ios;
+  if (playStoreBadge) playStoreBadge.href = LINKS.app.android;
 }
 
 function mountComponents() {
@@ -58,7 +56,7 @@ function mountComponents() {
 
   initShareSection({
     title: "ლოცვანი „იო“ს გადმოწერა",
-    url: PAGE_URL,
+    url: SITE_URL,
   });
 }
 

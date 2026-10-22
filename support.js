@@ -1,6 +1,8 @@
+import { LINKS } from "./src/links.js";
+
 const PAYMENT_LINKS = {
-  oneTime: "https://donate.stripe.com/3cIaEX8UA8Nc426bYU93y00",
-  monthly: "https://buy.stripe.com/eVq6oHgn24wWdCG0gc93y01",
+  oneTime: LINKS.support.stripeOneTime,
+  monthly: LINKS.support.stripeMonthly,
 };
 
 const STORAGE_KEY = "support-page-language";
@@ -9,6 +11,21 @@ const translations = {
   ka: {
     title: "ვახტანგ აბაშიძე",
     pageTitle: "დეველოპერის მხარდაჭერა - Vakhtangi Abashidze",
+    personalTab: "საბანკო გადარიცხვა",
+    cardTab: "პლასტიკური ბარათი",
+    personalTitle: "მხარდაჭერა ნებისმიერი ქართული ბანკიდან",
+    personalDescription:
+      "თანხის გადმორიცხვა შეგიძლიათ წამებში, თქვენი მობილბანკიდან ან ინტერნეტბანკიდან, IBAN-ის გამოყენებით.",
+    personalInstructions:
+      "გახსენით თქვენი ბანკის მობილბანკი ან ინტერნეტბანკი, აირჩიეთ გადარიცხვა სხვა ბანკში (TBC-ში გადარიცხვისას - TBC-ში), ჩასვით ქვემოთ მოცემული IBAN და მიუთითეთ თქვენთვის სასურველი თანხა.",
+    recipientLabel: "მიმღების სახელი",
+    recipientName: "ვახტანგ აბაშიძე",
+    bankLabel: "ბანკი",
+    ibanLabel: "IBAN",
+    copyIban: "კოპირება",
+    copiedIban: "დაკოპირდა ✓",
+    themeToDark: "ბნელი რეჟიმის ჩართვა",
+    themeToLight: "ნათელი რეჟიმის ჩართვა",
     kicker: "დეველოპერის მხარდაჭერა",
     subtitle:
       "დამოუკიდებელი დეველოპერი - მობილური · ვები · Backend · TypeScript · React Native · Expo.",
@@ -42,6 +59,21 @@ const translations = {
   en: {
     title: "Vakhtangi Abashidze",
     pageTitle: "Support the Developer - Vakhtangi Abashidze",
+    personalTab: "Bank transfer",
+    cardTab: "Support by card",
+    personalTitle: "Support from any Georgian bank",
+    personalDescription:
+      "Send support in seconds from your mobile or online banking using the IBAN below.",
+    personalInstructions:
+      "Open your bank's mobile or online banking, choose a transfer to another bank (or within TBC), paste the IBAN below and enter any amount you like.",
+    recipientLabel: "Recipient name",
+    recipientName: "Vakhtangi Abashidze",
+    bankLabel: "Bank",
+    ibanLabel: "IBAN",
+    copyIban: "Copy",
+    copiedIban: "Copied ✓",
+    themeToDark: "Switch to dark mode",
+    themeToLight: "Switch to light mode",
     kicker: "Support the developer",
     subtitle:
       "Independent developer - mobile · web · backend · TypeScript · React Native · Expo.",
@@ -73,6 +105,44 @@ const translations = {
     flowStepThree: "Choose the amount and complete payment.",
   },
 };
+
+const THEME_KEY = "support-page-theme";
+const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+function isDarkTheme() {
+  const saved = document.documentElement.dataset.theme;
+  return saved ? saved === "dark" : darkQuery.matches;
+}
+
+function renderThemeButton() {
+  const button = document.getElementById("theme-toggle");
+  if (!button) {
+    return;
+  }
+
+  const text = translations[document.documentElement.lang] || translations.ka;
+  const dark = isDarkTheme();
+  button.textContent = dark ? "☀️" : "🌙";
+  button.setAttribute("aria-label", dark ? text.themeToLight : text.themeToDark);
+}
+
+function bindThemeToggle() {
+  const button = document.getElementById("theme-toggle");
+  if (!button) {
+    return;
+  }
+
+  button.addEventListener("click", () => {
+    const next = isDarkTheme() ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try {
+      window.localStorage.setItem(THEME_KEY, next);
+    } catch {}
+    renderThemeButton();
+  });
+
+  darkQuery.addEventListener("change", renderThemeButton);
+}
 
 function getInitialLanguage() {
   const savedLanguage = window.localStorage.getItem(STORAGE_KEY);
@@ -107,6 +177,8 @@ function setLanguage(language) {
     }
   });
 
+  renderThemeButton();
+
   if (languageButton) {
     const nextLanguage = current === "ka" ? "en" : "ka";
     languageButton.dataset.language = nextLanguage;
@@ -130,6 +202,34 @@ function bindLanguageButtons() {
     if (language === "ka" || language === "en") {
       setLanguage(language);
     }
+  });
+}
+
+function bindIbanCopy() {
+  const value = document.getElementById("iban-value");
+  const button = document.getElementById("copy-iban");
+  if (!value || !button) {
+    return;
+  }
+
+  const iban = LINKS.support.tbcIban;
+  value.textContent = iban.replace(/(.{4})/g, "$1 ").trim();
+
+  button.addEventListener("click", async () => {
+    const text = translations[document.documentElement.lang] || translations.ka;
+    try {
+      await navigator.clipboard.writeText(iban);
+      button.textContent = text.copiedIban;
+    } catch {
+      const range = document.createRange();
+      range.selectNodeContents(value);
+      window.getSelection()?.removeAllRanges();
+      window.getSelection()?.addRange(range);
+      return;
+    }
+    setTimeout(() => {
+      button.textContent = text.copyIban;
+    }, 1800);
   });
 }
 
@@ -184,7 +284,29 @@ function bindOptionSelection() {
   });
 }
 
+function bindPaymentTabs() {
+  const tabButtons = Array.from(document.querySelectorAll("[data-payment-tab]"));
+  const panels = Array.from(document.querySelectorAll("[data-payment-panel]"));
+
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const selectedMethod = button.dataset.paymentTab;
+
+      tabButtons.forEach((tab) => {
+        tab.setAttribute("aria-selected", tab === button ? "true" : "false");
+      });
+
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.paymentPanel !== selectedMethod;
+      });
+    });
+  });
+}
+
 bindLanguageButtons();
+bindThemeToggle();
+bindIbanCopy();
 bindPaymentLinks();
 bindOptionSelection();
+bindPaymentTabs();
 setLanguage(getInitialLanguage());

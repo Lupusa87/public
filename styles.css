@@ -328,6 +328,8 @@ body {
 }
 
 .support-cta {
+  box-sizing: border-box; /* width: 100% on a phone must include the padding and border, or the button sticks out */
+  max-width: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;

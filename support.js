@@ -1,11 +1,11 @@
 import { LINKS } from "./src/links.js";
+import { LANGUAGE_KEY as STORAGE_KEY, THEME_KEY } from "./src/sitePrefs.js";
 
 const PAYMENT_LINKS = {
   oneTime: LINKS.support.stripeOneTime,
   monthly: LINKS.support.stripeMonthly,
 };
 
-const STORAGE_KEY = "support-page-language";
 
 const translations = {
   ka: {
@@ -106,7 +106,6 @@ const translations = {
   },
 };
 
-const THEME_KEY = "support-page-theme";
 const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
 function isDarkTheme() {

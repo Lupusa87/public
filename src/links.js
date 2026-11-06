@@ -15,6 +15,7 @@ export const LINKS = {
     iosAppId: "6754865510",
     android: "https://play.google.com/store/apps/details?id=com.lupusa87.ioliLocvani",
     androidPackage: "com.lupusa87.ioliLocvani",
+    web: "https://locvani.vaba.ge",
     androidDeepLink: `android-app://com.lupusa87.ioliLocvani/https/lupusa87.github.io/public/`,
   },
 

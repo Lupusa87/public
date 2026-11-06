@@ -15,6 +15,16 @@
       content="locvani, Locvani, locvani io, Locvani Io, ლოცვანი „იო“, „იო“ ლოცვანი, ლოცვანი, შვიდგზის ლოცვა, დილის ლოცვა, საღამოს ლოცვა, ზიარების ლოცვები, დედის ლოცვა, შვიდგზის ლოცვები, 7-გზის ლოცვა, 7-გზის ლოცვები, მართლმადიდებლობა, მართლმადიდებელი, ქრისტიანი, ქრისტიანობა, ქრისტე, ეკლესია, ქართული ლოცვები, ქართულ ენაზე ლოცვები, orthodox, orthodoxy, christian, prayer app, georgian prayer book, vakhtangi abashidze, ვახო აბაშიძე, ვახტანგ აბაშიძე, ვახტანგი აბაშიძე"
     />
     <meta name="author" content="ვახტანგ აბაშიძე (Vakhtangi Abashidze)" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // Sets the saved (or system) theme before the first paint; the choice is shared with support.html.
+      try {
+        var saved = localStorage.getItem("support-page-theme");
+        var dark = saved ? saved === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        if (localStorage.getItem("support-page-language") === "en") document.documentElement.lang = "en";
+      } catch (e) {}
+    </script>
 
     <!-- Canonical URL -->
     <link rel="canonical" href="{{links.site.home}}" />
@@ -81,22 +91,30 @@
     </script>
   </head>
   <body>
-    <div class="container">
-      <h3>მართლმადიდებლური მობილური აპლიკაცია</h3>
-      <h2>უფასო და რეგისტრაციის გარეშე</h2>
+    <div class="page-layout">
+    <div class="container main-card">
+      <div class="main-title-row">
+        <a class="avatar-circle main-title-avatar" href="https://vaba.ge" aria-label="vaba.ge">VA</a>
+        <div class="main-title-actions">
+          <button class="page-switch" type="button" id="theme-toggle" aria-label="Switch to dark mode">🌙</button>
+          <button class="page-switch" type="button" id="language-toggle" aria-label="Show in English">🇺🇸</button>
+        </div>
+      </div>
+      <h3 data-i18n="tagline">მართლმადიდებლური მობილური აპლიკაცია</h3>
+      <h2 data-i18n="free">უფასო და რეგისტრაციის გარეშე</h2>
       <img
         src="assets/locvaniIoIcon.png"
         alt="Locvani Io Icon"
         class="app-icon"
       />
-      <h1>ლოცვანი „იო“</h1>
+      <h1 data-i18n="appName">ლოცვანი „იო“</h1>
       <a class="support-cta" href="support.html">
         <span class="support-cta-icon" aria-hidden="true">🎁</span>
-        <span>დეველოპერის მხარდაჭერა</span>
+        <span data-i18n="support">დეველოპერის მხარდაჭერა</span>
       </a>
 
       <div class="loader"></div>
-      <p id="message">მიმდინარეობს გადამისამართება...</p>
+      <p id="message" data-i18n="redirecting">მიმდინარეობს გადამისამართება...</p>
 
       <div class="buttons" id="fallback" style="display: none">
         <div class="store-badges">
@@ -121,6 +139,20 @@
           >
             <img src="assets/googleplay.png" alt="Get it on Google Play" />
           </a>
+
+          <!-- Web app (shown everywhere: any browser can use it) -->
+          <a
+            href="{{links.app.web}}"
+            class="store-badge web-badge"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fa-solid fa-globe" aria-hidden="true"></i>
+            <span class="web-badge-text">
+              <span class="web-badge-small" data-i18n="openInBrowser">გახსენით ბრაუზერში</span>
+              <span class="web-badge-big">Web</span>
+            </span>
+          </a>
         </div>
 
         <div
@@ -143,6 +175,23 @@
         </div>
         -->
       </div>
+    </div>
+
+    <!-- Desktop only (styles.css): the QR card floats at the bottom right of a wide window; in a narrower one it collapses into a button that opens the code in a dialog. -->
+    <aside class="qr-side">
+      <p data-i18n="scanQr">გადმოსაწერად
+დაასკანერეთ ტელეფონით</p>
+      <img src="assets/qr.png" alt="QR code: locvani.vaba.ge/get-app" />
+    </aside>
+    <button class="qr-fab" type="button" aria-haspopup="dialog" aria-label="QR"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v3M17 20h4"/></svg></button>
+    <dialog class="qr-dialog" id="qr-dialog">
+      <button class="qr-close" type="button" aria-label="Close">✕</button>
+      <div class="qr-dialog-body">
+        <p data-i18n="scanQr">გადმოსაწერად
+დაასკანერეთ ტელეფონით</p>
+        <img src="assets/qr.png" alt="QR code: locvani.vaba.ge/get-app" />
+      </div>
+    </dialog>
     </div>
 
     <script type="module" src="/src/main.js"></script>

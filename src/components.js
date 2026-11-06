@@ -1,4 +1,5 @@
 import { LINKS } from "./links.js";
+import { t } from "./mainI18n.js";
 
 function shareLink(url) {
   return encodeURIComponent(url);
@@ -16,8 +17,7 @@ export function renderProfile() {
         <div>
           <div class="profile-name">ვახტანგ აბაშიძე - Vakhtangi Abashidze</div>
           <div class="profile-description">
-            დამოუკიდებელი დეველოპერი - მობილური · ვები · Backend · TypeScript ·
-            React Native · Expo.
+            ${t("profileDescription")}
           </div>
         </div>
       </div>
@@ -54,7 +54,7 @@ export function renderProfile() {
 export function renderSocialNetworks() {
   return `
     <section class="social-networks">
-      <h2 class="social-networks-name">ლოცვანი „იო“ სოც. ქსელებში</h2>
+      <h2 class="social-networks-name">${t("socialTitle")}</h2>
       <nav class="social-links" aria-label="Social media links">
         <a
           class="social-button facebook"
@@ -93,7 +93,7 @@ export function renderSocialNetworks() {
 export function renderShareSection() {
   return `
     <section class="share-section">
-      <h2 class="share-title">გააზიარე:</h2>
+      <h2 class="share-title">${t("shareTitle")}</h2>
       <nav class="share-links" aria-label="Share on social media">
         <a class="share-button fb" aria-label="Share on Facebook">
           <i class="fa-brands fa-facebook" aria-hidden="true"></i>
@@ -117,7 +117,7 @@ export function renderShareSection() {
 
         <a class="share-button copylink" href="#" aria-label="Copy link to clipboard">
           <i class="fa-solid fa-link" aria-hidden="true"></i>
-          ბმულის კოპირება
+          ${t("copyLink")}
         </a>
       </nav>
     </section>
@@ -151,15 +151,15 @@ export function initShareSection({ title, url }) {
       try {
         await navigator.clipboard.writeText(url);
         const original = copy.textContent;
-        copy.textContent = "კოპირებულია";
+        copy.textContent = t("copied");
         window.setTimeout(() => {
-          copy.textContent = original || "ბმულის კოპირება";
+          copy.textContent = original || t("copyLink");
         }, 1400);
       } catch {
         const original = copy.textContent;
-        copy.textContent = "ვერ დაკოპირდა";
+        copy.textContent = t("copyFailed");
         window.setTimeout(() => {
-          copy.textContent = original || "ბმულის კოპირება";
+          copy.textContent = original || t("copyLink");
         }, 1400);
       }
     });
